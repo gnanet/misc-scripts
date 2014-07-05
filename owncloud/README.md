@@ -7,7 +7,7 @@ owncloud related scripts
 **I am not responsible for any damage caused by my scripts when you were using them irresponsibly, and did not understand them in detail**
 
 ---
-## About the scripts ##
+## Information about the scripts  ##
 
 ### oc-generate-share-keys.php ###
 
