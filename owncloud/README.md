@@ -1,12 +1,12 @@
 owncloud related scripts
 ============
-=IMPORTANT: USE AT OWN RISK!!=
+##IMPORTANT: USE AT OWN RISK!!##
 **The scripts presented here are generalized versions of the scripts i used to solve my specific problem, while i tried to be very careful while creating the generalized versions, i could have made mistakes.**
 
 **I am not responsible for any damage caused by my scripts when you were using them irresponsibly, and did not understand them in detail**
 
-== About the scripts ==
-=== oc-generate-share-keys.php ===
+## About the scripts ##
+### oc-generate-share-keys.php ###
 **Purpose**
 This script generates a set of share-keys and the keyfile for an owncloud serverside-encrypted file. The only required commandline argument is the so called objectname, which is a relative pathname of the serverside-encrypted file.
 The funtionality of this script is limited to generate new set of key files of already shared files, where the sharing process failed for some user, who is marked to be migrated, leaving the key files inconsistent state, and at least the owner can acccess the file without problems. This script does not share, encrypt, or create new encryption key for a file, also it does not update any database information that may be required for the flawless operation of OwnCloud.
@@ -29,7 +29,7 @@ Inside the script you have to set following variables:
  * the script needs to load a class from the Owncloud Encryption APP so it should be placed it in a folder in the web-root of OwnCloud, if you place it in some other location, you have to adjust the path of the *require_once* function.
 
 
-===oc-sharekey-robot.sh===
+### oc-sharekey-robot.sh ###
 **Purpose**
 This bash script serves as a wrapper for **oc-generate-share-keys.php**, to allow the regeneration of key sets for all files of a share.
 
@@ -53,4 +53,4 @@ Inside the script you have to set following variables:
  * SHAREOWNER - the username of the owner of the shared file
  * OCDATADIR - the full path to the OwnCloud datadir without trailing slash
 
-The script 
+
