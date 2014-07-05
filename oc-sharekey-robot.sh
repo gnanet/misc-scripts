@@ -1,5 +1,5 @@
 #!/bin/bash
-SHARENAME="the folder where "
+SHARENAME="the folder that is being shared"
 SHAREOWNER="the user who owns the share"
 FILEBASE=/the-owncloud-datadir/${SHAREOWNER}/files/${SHARENAME}
 KEYBASE=/the-owncloud-datadir/${SHAREOWNER}/files_encryption/keyfiles/${SHARENAME}
@@ -22,23 +22,24 @@ then
 
         opath="${SHARENAME}/`dirname "${object}"`"
         echo $opath
-        if [ ! -d "${oldpwd}/work/key/${opath}" ]
+        if [ ! -d "${oldpwd}/work/keyfiles/${opath}" ]
         then
-        mkdir -p "${oldpwd}/work/key/${opath}"
+        mkdir -p "${oldpwd}/work/keyfiles/${opath}"
         fi
 
-        if [ ! -d "${oldpwd}/work/share/${opath}" ]
+        if [ ! -d "${oldpwd}/work/share-keys/${opath}" ]
         then
-        mkdir -p "${oldpwd}/work/share/${opath}"
+        mkdir -p "${oldpwd}/work/share-keys/${opath}"
         fi
 
         cd ${oldpwd}
-        php ./oc-generate-share-keys.php "${SHARENAME}/${object}" 2>&1 | tee -a ${SHARENAME}-gen.log
+        php ./oc-generate-share-keys.php "${SHARENAME}/${object}" 2>&1 | tee -a ${oldpwd}/${SHARENAME}-gen.log
 
 else
-        echo "${SHARENAME}/${object}" >> ${SHARENAME}-sharekey-none.log
+        echo "${SHARENAME}/${object}" >> ${oldpwd}/${SHARENAME}-sharekey-none.log
 fi
 
 done
 
+chown 65534:65534 ${oldpwd}/work -R
 cd ${oldpwd}
