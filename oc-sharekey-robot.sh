@@ -1,35 +1,34 @@
 #!/bin/bash
 SHARENAME="the folder that is being shared"
 SHAREOWNER="the user who owns the share"
-FILEBASE=/the-owncloud-datadir/${SHAREOWNER}/files/${SHARENAME}
-KEYBASE=/the-owncloud-datadir/${SHAREOWNER}/files_encryption/keyfiles/${SHARENAME}
-SHAREBASE=/the-owncloud-datadir/${SHAREOWNER}/files_encryption/share-keys/${SHARENAME}
+$OCDATADIR="/path-to-oc-datadir-no-trailing-slash"
+FILEBASE=${OCDATADIR}/${SHAREOWNER}/files/${SHARENAME}
+KEYBASE=${OCDATADIR}/${SHAREOWNER}/files_encryption/keyfiles/${SHARENAME}
+SHAREBASE=${OCDATADIR}/${SHAREOWNER}/files_encryption/share-keys/${SHARENAME}
 oldpwd=`pwd`
+WORKDIR="${oldpwd}/work-${SHAREOWNER}/files_encryption"
 
-if [ ! -d ./work ]
+if [ ! -d ${WORKDIR} ]
 then
-mkdir ./work
+mkdir -p ${WORKDIR}
 fi
 
-
 cd ${FILEBASE}
-
 find ./ -type f | sed -e "s/^..//g " | while read object
 do
 
-if [  -f  "${SHAREBASE}/${object}.${SHAREOWNER}.shareKey" ]
+if [ -f "${SHAREBASE}/${object}.${SHAREOWNER}.shareKey" ]
 then
-
         opath="${SHARENAME}/`dirname "${object}"`"
         echo $opath
-        if [ ! -d "${oldpwd}/work/keyfiles/${opath}" ]
+        if [ ! -d "${WORKDIR}/keyfiles/${opath}" ]
         then
-        mkdir -p "${oldpwd}/work/keyfiles/${opath}"
+        mkdir -p "${WORKDIR}/keyfiles/${opath}"
         fi
 
-        if [ ! -d "${oldpwd}/work/share-keys/${opath}" ]
+        if [ ! -d "${WORKDIR}/share-keys/${opath}" ]
         then
-        mkdir -p "${oldpwd}/work/share-keys/${opath}"
+        mkdir -p "${WORKDIR}/share-keys/${opath}"
         fi
 
         cd ${oldpwd}
@@ -41,5 +40,5 @@ fi
 
 done
 
-chown 65534:65534 ${oldpwd}/work -R
+chown 65534:65534 ${WORKDIR} -R
 cd ${oldpwd}
