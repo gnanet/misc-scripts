@@ -49,15 +49,16 @@ $newshareKeys = $multiEncKey['keys'];
 $newKeyfile = $multiEncKey['data'];
 
 
-// TODO the recursive folder structure of ./work has to be created to place the files in a simply copiable stucture
-//
+// TODO migrate the recursive folder creation from the shell script to avoid problems caused by different folder settings
+// 
+
 
 // storing the key files
 foreach ($newshareKeys as $userId => $newshareKey) {
-        file_put_contents("./work/share/". $FILEFULLNAME . "." . $userId . ".shareKey", $newshareKey);
+        file_put_contents("./work/share-keys/". $FILEFULLNAME . "." . $userId . ".shareKey", $newshareKey);
 }
 
-file_put_contents("./work/key/" . $FILEFULLNAME . ".key", $newKeyfile);
+file_put_contents("./work/keyfiles/" . $FILEFULLNAME . ".key", $newKeyfile);
 
 fwrite(STDERR, "Done $FILENAME\n");
 
