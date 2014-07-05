@@ -16,24 +16,35 @@ exit(1);
 // I placed the script in a subfolder of owncloud web-root
 require_once '../apps/files_encryption/lib/crypt.php';
 
+
+$startdir=$_SERVER['PWD'];
 $SHAREOWNER = 'masteruser';
 $OWNERPASSWORD = 'somepassword';
+$OCDATADIR="/path-to-oc-datadir-no-trailing-slash";
+$WORKDIR=$startdir . "/work-" . $SHAREOWNER ."/files_encryption";
+
 $myAllowUsers = array($SHAREOWNER,"user1", "user2", "user3", "user4");
 
+
 // the file for we need new keys has to be relative to the "files" folder of the share-owner
-$FILEFULLNAME = $argv[1];
-$FILENAME = basename($FILEFULLNAME);
+$OBJECTNAME = $argv[1];
 
-$OCDATADIR="/path-to-oc-datadir-no-trailing-slash";
+if (!is_file($OCDATADIR."/".$SHAREOWNER."/files_encryption/keyfiles/".$OBJECTNAME.".key")) {
+	fwrite(STDERR, 'No keyfile found for Object, cannot continue');
+	exit(1);
+}
 
+
+$FILENAME = basename($OBJECTNAME);
+$OPATH = dirname($OBJECTNAME);
 
 // first get share owners private key and decrypt it
 $encryptedUserKey = file_get_contents("$OCDATADIR/$SHAREOWNER/files_encryption/$SHAREOWNER.private.key");
 $decryptedUserKey = OCA\Encryption\Crypt::decryptPrivateKey($encryptedUserKey, $OWNERPASSWORD);
 
 // now we need to decrypt the file-key, therefore we use the private key and the share key
-$shareKey = file_get_contents("$OCDATADIR/$SHAREOWNER/files_encryption/share-keys/$FILEFULLNAME.$SHAREOWNER.shareKey");
-$encryptedKeyfile = file_get_contents("$OCDATADIR/$SHAREOWNER/files_encryption/keyfiles/$FILEFULLNAME.key");
+$shareKey = file_get_contents("$OCDATADIR/$SHAREOWNER/files_encryption/share-keys/$OBJECTNAME.$SHAREOWNER.shareKey");
+$encryptedKeyfile = file_get_contents("$OCDATADIR/$SHAREOWNER/files_encryption/keyfiles/$OBJECTNAME.key");
 $decryptedKeyfile = OCA\Encryption\Crypt::multiKeyDecrypt($encryptedKeyfile, $shareKey, $decryptedUserKey);
 
 // then we get the users public key
@@ -49,16 +60,27 @@ $newshareKeys = $multiEncKey['keys'];
 $newKeyfile = $multiEncKey['data'];
 
 
-// TODO migrate the recursive folder creation from the shell script to avoid problems caused by different folder settings
-// 
+// create recursive work directory structure for keyfiles and share-keys if needed
+if (!is_dir($WORKDIR . "/share-keys/" . $OPATH)) {
+		if (!mkdir($WORKDIR . "/share-keys/" . $OPATH, 0770, true)) {
+			fwrite(STDERR, 'Failed to create folders...');
+			exit(1);
+			}
+}
+if (!is_dir($WORKDIR . "/keyfiles/" . $OPATH)) {
+		if(!mkdir($WORKDIR . "/keyfiles/" . $OPATH, 0770, true)) {
+			fwrite(STDERR, 'Failed to create folders...');
+			exit(1);
+		}
+}
 
 
 // storing the key files
 foreach ($newshareKeys as $userId => $newshareKey) {
-        file_put_contents("./work/share-keys/". $FILEFULLNAME . "." . $userId . ".shareKey", $newshareKey);
+        file_put_contents($WORKDIR . "/share-keys/" . $OBJECTNAME . "." . $userId . ".shareKey", $newshareKey);
 }
 
-file_put_contents("./work/keyfiles/" . $FILEFULLNAME . ".key", $newKeyfile);
+file_put_contents($WORKDIR . "/keyfiles/" . $OBJECTNAME . ".key", $newKeyfile);
 
 fwrite(STDERR, "Done $FILENAME\n");
 
