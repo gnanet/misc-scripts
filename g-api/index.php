@@ -25,5 +25,4 @@ echo $eventsrecorded."\n<br>\n";
 ?>
 </p>
 </body>
-
 </html>

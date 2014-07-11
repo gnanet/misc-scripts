@@ -1,9 +1,15 @@
 <?php
-error_reporting(E_ALL);
 
 session_start();
 require_once 'Google/Client.php';
 require_once 'Google/Service/Calendar.php';
+
+$authconfigfile='';
+
+if (isempty($authconfigfile) && file_exists($authconfigfile);) {
+	echo '<b>You have to specify the JSON file created in https://console.developers.google.com as OAUTH "Client ID for web application"</b>';
+	exit;
+}
 
 
 $client = new Google_Client();
@@ -16,7 +22,7 @@ if (isset($_SESSION['token'])) {
  $client->setAccessToken($_SESSION['token']);
 }
 
-$client->setAuthConfigFile('api-config-web.json');
+$client->setAuthConfigFile($authconfigfile);
 
 $service = new Google_Service_Calendar($client);
 
@@ -44,7 +50,19 @@ if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
   exit;
 }
 
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
+<head>
+	<title>Google Calendar APIv3 insert event test implementation</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 1.24.1" />
+</head>
+
+<body>
+<?php
 
 
 echo '<div><div class="request">';
@@ -93,5 +111,6 @@ if (isset($authUrl)) {
 	}
 };
 echo '</div>';
-
-
+?>
+</body>
+</html>
