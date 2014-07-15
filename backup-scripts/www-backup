@@ -1,0 +1,6 @@
+#!/bin/bash
+SRC=/data/www
+DST=/data/backup/www
+
+rdiff-backup -b ${SRC} ${DST}/
+rdiff-backup --force --remove-older-than 30D ${DST}
