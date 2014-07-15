@@ -1,0 +1,40 @@
+#!/bin/bash
+DATE=`date +"%Y-%m-%d"`
+RMDATE=`date +"%Y-%m-%d" -d '-31 day'`
+USER=''
+PASS=''
+MYSQLSERVER=''
+DIR=/data/backup/mysql/
+DEST=${DIR}${DATE}
+
+IGNORE="information_schema performance_schema"
+
+if [ ! -d ${DEST} ]
+then
+    mkdir -p ${DEST}
+fi
+    DB_LIST=`/usr/bin/mysql -Bse 'show databases' -u ${USER} -p${PASS} -h ${MYSQLSERVER}`
+    for db in $DB_LIST; do
+        skip=0
+        if [ "$IGNORE" != "" ]; then
+            for i in $IGNORE; do
+                [ "$db" == "$i" ] && skip=1 || :
+            done
+        fi
+        if [ "$skip" == "0" ]; then
+        echo $db
+            /usr/bin/mysqldump -u ${USER} -p${PASS} -h ${MYSQLSERVER} --events $db | gzip -c - > ${DEST}/$db.sql.gz
+        fi
+    done
+
+
+if [[ "`echo ${RMDATE} | awk -F'-' {' print $3 '}`" != "01" ]]
+then
+    if [ -d ${DIR}${RMDATE} ]
+    then
+        echo "removing ${DIR}${RMDATE}"
+        rm -r ${DIR}${RMDATE}
+    else
+    echo "Nothing to remove at ${RMDATE}"
+    fi
+fi
