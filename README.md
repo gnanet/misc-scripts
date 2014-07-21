@@ -1,4 +1,3 @@
-[![githalytics.com alpha](https://cruel-carlota.gopagoda.com/ec9e25278cc2294693e65bf9d438056a "githalytics.com")](http://githalytics.com/gnanet/misc-scripts)
 misc-scripts
 ============
 ##IMPORTANT: USE AT OWN RISK!!##
