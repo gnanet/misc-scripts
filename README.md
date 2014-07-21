@@ -9,3 +9,5 @@ misc-scripts
 ---
 
 This repository contains all sorts of scripts i created to solve my problems
+
+[![Analytics](https://ga-beacon.appspot.com/UA-1719348-3/gnanet/misc-scripts/readme)](https://github.com/igrigorik/ga-beacon)
