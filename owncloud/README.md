@@ -64,4 +64,4 @@ Inside the script you have to set following variables:
  * OCDATADIR - the full path to the OwnCloud datadir without trailing slash
 
 
-[![Analytics](https://ga-beacon.appspot.com/UA-1719348-3/gnanet/misc-scripts/owncloud)](https://github.com/igrigorik/ga-beacon)
+[![Analytics](https://ga-beacon.appspot.com/UA-1719348-3/gnanet/misc-scripts/tree/master/owncloud)](https://github.com/igrigorik/ga-beacon)
