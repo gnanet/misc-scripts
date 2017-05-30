@@ -7,12 +7,14 @@ PASS=''
 MYSQLSERVER=''
 DIR=/data/backup/mysql/
 DEST=${DIR}${DATE}
+MYCNF=/tmp/$$.my.cnf
+
 
 echo "[client]
 user=${USER}
 password=${PASS}
 port=3306
-host=${MYSQLSERVER}" > /usr/local/sbin/.my.cnf
+host=${MYSQLSERVER}" > ${MYCNF}
 
 IGNORE="information_schema performance_schema"
 
@@ -24,7 +26,7 @@ fi
 # Single run or all databases
     if [ $1 ]
     then
-        check_me=`mysql --defaults-extra-file=/usr/local/sbin/.my.cnf -Bse 'show databases' | grep "$1"`
+        check_me=`mysql --defaults-extra-file=${MYCNF} -Bse 'show databases' | grep "$1"`
         if [ "${check_me}" != "" ]
         then
             DB_LIST=${check_me}
@@ -33,7 +35,7 @@ fi
             exit 1
         fi
     else
-            DB_LIST=`mysql --defaults-extra-file=/usr/local/sbin/.my.cnf -Bse 'show databases'`
+            DB_LIST=`mysql --defaults-extra-file=${MYCNF} -Bse 'show databases'`
     fi
 
 for db in $DB_LIST; do
@@ -48,13 +50,15 @@ for db in $DB_LIST; do
     logger -t sql-backup "Dumping ${db}"
         if [ -f "${DEST}/$db.sql.gz" ]
         then
-            mysqldump --defaults-extra-file=/usr/local/sbin/.my.cnf --trigger $db | gzip -c - > ${DEST}/$db-${NOWTIME}.sql.gz
+            mysqldump --defaults-extra-file=${MYCNF} --trigger $db | gzip -c - > ${DEST}/$db-${NOWTIME}.sql.gz
         else
-            mysqldump --defaults-extra-file=/usr/local/sbin/.my.cnf --trigger $db | gzip -c - > ${DEST}/$db.sql.gz
+            mysqldump --defaults-extra-file=${MYCNF} --trigger $db | gzip -c - > ${DEST}/$db.sql.gz
         fi
     fi
 
 done
+
+rm ${MYCNF}
 
 # Skip removing old backups if single database backup was requested
 if [ $1 ]; then exit; fi
